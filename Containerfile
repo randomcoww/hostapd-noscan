@@ -1,7 +1,6 @@
-# Based on https://git.alpinelinux.org/aports/tree/main/hostapd/APKBUILD
 FROM alpine:latest
-
 ARG VERSION=2.11
+
 COPY buildconfig /
 COPY noscan.patch /
 
