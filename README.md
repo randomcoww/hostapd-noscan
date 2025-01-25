@@ -1,5 +1,7 @@
-### hostapd container
+### Container for hostapd with noscan patch
 
-Applies noscan patch from
+https://w1.fi/releases/
+
+Noscan patch
 
 http://copr-dist-git.fedorainfracloud.org/git/dturner/hostapd-noscan/hostapd.git
