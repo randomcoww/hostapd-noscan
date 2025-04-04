@@ -24,6 +24,10 @@ jobs:
       contents: read
       packages: write
     steps:
+    - name: Set tag
+      run: |
+        echo TAG=$(date -u +'%Y%m%d.%H%M') | tee -a "$GITHUB_ENV"
+
     - name: Build and release container
       run: |
         cat > $DOCKER_CONFIG/config.json <<EOF
@@ -39,6 +43,6 @@ jobs:
         /kaniko/executor \
           --dockerfile="./Containerfile" \
           --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \
-          --destination="ghcr.io/${{ github.repository }}:v$(date -u +'%Y%m%d.%H%M')" \
+          --destination="ghcr.io/${{ github.repository }}:v$VERSION.$TAG" \
           --build-arg VERSION=$VERSION \
           --push-retry 3
