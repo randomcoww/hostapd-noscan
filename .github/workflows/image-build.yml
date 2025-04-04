@@ -6,8 +6,14 @@ name: Image Build
 on:
   workflow_dispatch:
   push:
-    tags:
-    - v*
+    paths-ignore:
+    - .github/**
+    - README.md
+    branches:
+    - master
+
+env:
+  VERSION: 2.11
 
 jobs:
   build:
@@ -33,6 +39,6 @@ jobs:
         /kaniko/executor \
           --dockerfile="./Containerfile" \
           --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \
-          --destination="ghcr.io/${{ github.repository }}:${{ github.head_ref || github.ref_name }}" \
-          --build-arg VERSION=${{ github.head_ref || github.ref_name }} \
+          --destination="ghcr.io/${{ github.repository }}:v$(date -u +'%Y%m%d.%H%M')" \
+          --build-arg VERSION=$VERSION \
           --push-retry 3

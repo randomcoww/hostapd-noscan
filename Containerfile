@@ -1,5 +1,5 @@
 FROM alpine:latest
-ARG VERSION=v2.11
+ARG VERSION
 
 COPY buildconfig /
 COPY noscan.patch /
@@ -14,7 +14,7 @@ RUN set -x \
     g++ \
     patch \
   \
-  && wget -O hostapd.tar.gz "https://w1.fi/releases/hostapd-$(echo -n $VERSION | tr -d 'v').tar.gz" \
+  && wget -O hostapd.tar.gz "https://w1.fi/releases/hostapd-$VERSION.tar.gz" \
   && mkdir -p /usr/src/hostapd \
   && tar xf hostapd.tar.gz --strip-components=1 -C /usr/src/hostapd \
   && patch -Np1 -i /noscan.patch -d /usr/src/hostapd \
