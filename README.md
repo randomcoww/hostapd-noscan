@@ -2,6 +2,12 @@
 
 https://w1.fi/releases/
 
-Noscan patch from
+Patched build from
 
 https://aur.archlinux.org/packages/hostapd-noscan
+
+Latest release
+
+```bash
+curl -s https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=hostapd-noscan | grep ^pkgver | tr -d "pkgver="
+```

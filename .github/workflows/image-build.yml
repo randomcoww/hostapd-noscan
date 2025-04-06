@@ -13,7 +13,7 @@ on:
     - master
 
 env:
-  VERSION: 2.11
+  PKGNAME: hostapd-noscan
 
 jobs:
   build:
@@ -26,6 +26,7 @@ jobs:
     steps:
     - name: Set tag
       run: |
+        echo VERSION=$(wget -O - https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=$PKGNAME | grep ^pkgver | tr -d "pkgver=") | tee -a "$GITHUB_ENV"
         echo TAG=$(date -u +'%Y%m%d.%H%M') | tee -a "$GITHUB_ENV"
 
     - name: Build and release container
@@ -45,4 +46,5 @@ jobs:
           --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \
           --destination="ghcr.io/${{ github.repository }}:v$VERSION.$TAG" \
           --build-arg VERSION=$VERSION \
+          --build-arg PKGNAME=$PKGNAME \
           --push-retry 3
