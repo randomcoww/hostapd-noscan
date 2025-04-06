@@ -17,7 +17,7 @@ RUN set -x \
   && wget -O hostapd.tar.gz "https://w1.fi/releases/hostapd-$VERSION.tar.gz" \
   && mkdir -p /usr/src/hostapd \
   && tar xf hostapd.tar.gz --strip-components=1 -C /usr/src/hostapd \
-  && patch -Np1 -i /noscan.patch -d /usr/src/hostapd \
+  && patch -Np0 -i /noscan.patch -d /usr/src/hostapd \
   && rm \
     hostapd.tar.gz \
     /noscan.patch \
