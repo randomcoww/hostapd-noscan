@@ -12,9 +12,6 @@ on:
     branches:
     - master
 
-env:
-  PKGNAME: hostapd-noscan
-
 jobs:
   build:
     runs-on: arc-runner-${{ github.event.repository.name }}
@@ -26,7 +23,6 @@ jobs:
     steps:
     - name: Set tag
       run: |
-        echo VERSION=$(wget --no-check-certificate -O - https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=$PKGNAME | grep ^pkgver | tr -d "pkgver=") | tee -a "$GITHUB_ENV"
         echo TAG=$(date -u +'%Y%m%d.%H%M') | tee -a "$GITHUB_ENV"
 
     - name: Build and release container
@@ -44,7 +40,5 @@ jobs:
         /kaniko/executor \
           --dockerfile="./Containerfile" \
           --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \
-          --destination="ghcr.io/${{ github.repository }}:v$VERSION.$TAG" \
-          --build-arg VERSION=$VERSION \
-          --build-arg PKGNAME=$PKGNAME \
+          --destination="ghcr.io/${{ github.repository }}:v$TAG" \
           --push-retry 3

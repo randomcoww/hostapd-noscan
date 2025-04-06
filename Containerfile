@@ -1,5 +1,4 @@
 FROM alpine:latest
-ARG VERSION
 ARG PKGNAME
 
 COPY buildconfig /
@@ -14,7 +13,8 @@ RUN set -x \
     g++ \
     patch \
   \
-  && wget -O noscan.patch https://aur.archlinux.org/cgit/aur.git/plain/noscan.patch?h=$PKGNAME \
+  && VERSION=$(wget -O - https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=hostapd-noscan | grep ^pkgver | tr -d "pkgver=") \
+  && wget -O noscan.patch https://aur.archlinux.org/cgit/aur.git/plain/noscan.patch?h=hostapd-noscan \
   && wget -O hostapd.tar.gz "https://w1.fi/releases/hostapd-$VERSION.tar.gz" \
   && mkdir -p /usr/src/hostapd \
   && tar xf hostapd.tar.gz --strip-components=1 -C /usr/src/hostapd \
