@@ -5,6 +5,8 @@
 name: Image Build
 on:
   workflow_dispatch:
+  schedule:
+  - cron: "0 23 1 * *"
   push:
     paths-ignore:
     - .github/**
@@ -26,7 +28,7 @@ jobs:
     steps:
     - name: Set tag
       run: |
-        echo VERSION=$(wget -O - https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=$PKGNAME | grep ^pkgver | tr -d "pkgver=")
+        echo VERSION=$(wget -O - https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=$PKGNAME | grep ^pkgver | tr -d "pkgver=") | tee -a "$GITHUB_ENV"
         echo TAG=$(date -u +'%Y%m%d.%H%M') | tee -a "$GITHUB_ENV"
 
     - name: Build and release container
