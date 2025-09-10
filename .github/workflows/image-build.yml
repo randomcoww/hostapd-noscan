@@ -53,7 +53,6 @@ jobs:
           --destination="ghcr.io/${{ github.repository }}:v$VERSION.$TAG" \
           --build-arg PKGNAME=$PKGNAME \
           --build-arg VERSION=$VERSION \
-          --cache \
           --push-retry 3
   cleanup:
     needs:
