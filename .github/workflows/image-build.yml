@@ -27,7 +27,6 @@ jobs:
       image: ghcr.io/randomcoww/kaniko:debug
     permissions:
       contents: read
-      packages: write
     steps:
     - name: Set tag
       run: |
@@ -46,27 +45,36 @@ jobs:
           }
         }
         EOF
+        echo -e "$INTERNAL_CA_CERT" > $DOCKER_CONFIG/internal.crt
 
         /kaniko/executor \
           --dockerfile="./Containerfile" \
           --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \
-          --destination="ghcr.io/${{ github.repository }}:v$VERSION.$TAG" \
+          --destination="$INTERNAL_REGISTRY/${{ github.repository }}:v$VERSION.$TAG" \
+          --registry-certificate=$INTERNAL_REGISTRY=$DOCKER_CONFIG/internal.crt \
           --build-arg PKGNAME=$PKGNAME \
           --build-arg VERSION=$VERSION \
           --push-retry 3
   cleanup:
     needs:
       - build
+    env:
+      TAGS_KEEP: 4
     runs-on: arc-runner-${{ github.event.repository.name }}
     container:
-      image: docker.io/node:current-alpine
-    permissions:
-      packages: write
+      image: docker.io/regclient/regctl:alpine
     steps:
-      - name: Remove old container images
-        uses: actions/delete-package-versions@v5
-        with:
-          package-name: ${{ github.event.repository.name }}
-          package-type: container
-          min-versions-to-keep: 4
-          token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Remove old tags
+      run: |
+        set -e
+        regctl registry set $INTERNAL_REGISTRY --cacert "$INTERNAL_CA_CERT"
+        tags=$(regctl tag ls $INTERNAL_REGISTRY/${{ github.repository }} | grep -v latest | sort -r)
+
+        i=0
+        for tag in $@; do
+          if [ "$i" -ge "$TAGS_KEEP" ]; then
+            echo "Delete $tag"
+            regctl tag delete --ignore-missing $INTERNAL_REGISTRY/${{ github.repository }}:$tag
+          fi
+          i=$((i + 1))
+        done
