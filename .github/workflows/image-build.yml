@@ -71,7 +71,7 @@ jobs:
         tags=$(regctl tag ls $INTERNAL_REGISTRY/${{ github.repository }} | grep -v latest | sort -r)
 
         i=0
-        for tag in $@; do
+        for tag in $tags; do
           if [ "$i" -ge "$TAGS_KEEP" ]; then
             echo "Delete $tag"
             regctl tag delete --ignore-missing $INTERNAL_REGISTRY/${{ github.repository }}:$tag
